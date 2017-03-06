@@ -1,8 +1,11 @@
 package jhd;
 
+import java.util.Date;
+import java.util.Formatter;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.bcel.generic.NEW;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -15,6 +18,7 @@ public class Main {
 	private static WebDriver driver;
 	private static String baseUrl;
 	private static Mp3Player player = new Mp3Player();
+	static Formatter formatter = new Formatter(System.out);
 	/*
 	 * static { Constant.readProperties(); }
 	 */
@@ -26,12 +30,16 @@ public class Main {
 
 		prepare();
 
+		Runtime runtime = Runtime.getRuntime();
 		while (true) {
 			try {
+				runtime.exec("cmd cls");
 				loopRemedy();
 			} catch (Exception e) {
 				e.printStackTrace();
-				System.out.println("-------------------err---------------");
+				System.out.println(new Date().toString());
+				ErrOutput.err("循环出错");
+				player.play();
 			}
 		}
 
@@ -73,8 +81,9 @@ public class Main {
 	 */
 	public static void loopRemedy() throws Exception {
 
-		Thread.sleep(20000l);
+		Thread.sleep(40000l);
 
+		
 		/*
 		 * /try { Thread.sleep(3000l); } catch (InterruptedException e1) { //
 		 */
@@ -87,7 +96,7 @@ public class Main {
 
 		WebElement table = driver.findElement(By.id("T302087200"));
 		// System.out.println(findElement.getText());
-		System.out.println("-----------------------");
+		System.out.println("------------------------------------");
 
 		WebElement tbody = table.findElement(By.tagName("tbody"));
 		List<WebElement> trs = tbody.findElements(By.tagName("tr"));
@@ -95,17 +104,20 @@ public class Main {
 		for (int i = 1; i < trs.size(); i++) {// 跳过第一个，第一个是表头
 			List<WebElement> tds = trs.get(i).findElements(By.tagName("td"));
 			if (tds != null && tds.size() >= 4) {
+				String ID = tds.get(0).getText();
+				String priority = tds.get(2).getText();
 				// 第四列是状态״̬
 				String status = tds.get(3).getText();
+				formatter.format("%16s %-5s %-5s\n", ID, priority, status);
 				if (status.equals("已指派")) {
 					unACK++;
-					System.out.println("有未受理ticket");
+					System.out.println("有未受理ticket"+new Date().toString());
 					player.play();
 				}
 				// System.out.println(status);
 			}
 		}
-		System.out.println("UnACK:" + unACK);
+		System.out.println(new Date().toString()+" UnACK:" + unACK);
 	}
 
 }

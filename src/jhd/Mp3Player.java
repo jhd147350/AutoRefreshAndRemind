@@ -34,10 +34,13 @@ public class Mp3Player {
 			// player.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+			ErrOutput.err("mp3文件未找到");
 		} catch (JavaLayerException e) {
 			e.printStackTrace();
+			ErrOutput.err("mp3播放错误");
 		} catch (IOException e) {
 			e.printStackTrace();
+			ErrOutput.err("IO错误");
 		}
 		playing = false;
 
