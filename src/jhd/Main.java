@@ -12,6 +12,11 @@ import org.openqa.selenium.chrome.ChromeDriver;
 
 import jhd.config.Constant;
 
+/**
+ * 
+ * @author jia.haodong
+ * v1.2
+ */
 public class Main {
 
 	private static WebDriver driver;
