@@ -10,7 +10,7 @@ import javazoom.jl.player.Player;
 
 public class Mp3Player {
 	//
-	private String filename;
+	//private String filename;
 	private Player player;
 	private boolean playing = false;
 

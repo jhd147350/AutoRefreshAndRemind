@@ -1,12 +1,9 @@
 package jhd.config;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -36,19 +33,19 @@ public class Constant {
 			FileInputStream fileInputStream = new FileInputStream(file);
 
 			p.load(fileInputStream);
-			FIRSTRUN = Boolean.parseBoolean(p.getProperty(FIRSTRUN_STRING,"true"));
+			FIRSTRUN = Boolean.parseBoolean(p.getProperty(FIRSTRUN_STRING, "true"));
 			if (FIRSTRUN) {
 				System.out.println("It's your first run! Pls set your Remedy username & password!");
 				reSetConfig();
-				//System.exit(0);
+				// System.exit(0);
 				fileInputStream.close();
 				readProperties();
 			} else {
 				USERNAME = p.getProperty(USERNAME_STRING);
 				PASSWORD = p.getProperty(PASSWORD_STRING);
-				//System.out.println(FIRSTRUN);
-				//System.out.println(USERNAME);
-				//System.out.println(PASSWORD);
+				// System.out.println(FIRSTRUN);
+				// System.out.println(USERNAME);
+				// System.out.println(PASSWORD);
 			}
 
 		} catch (IOException e) {
@@ -82,7 +79,7 @@ public class Constant {
 	}
 
 	public static void reSetConfig() {
-		
+
 		System.out.println("Username:");
 		Scanner s = new Scanner(System.in);
 		USERNAME = s.next();

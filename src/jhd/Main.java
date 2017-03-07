@@ -5,7 +5,6 @@ import java.util.Formatter;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.bcel.generic.NEW;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -30,10 +29,11 @@ public class Main {
 
 		prepare();
 
-		Runtime runtime = Runtime.getRuntime();
 		while (true) {
 			try {
-				runtime.exec("cmd cls");
+
+				// http://www.th7.cn/system/win/201610/186464.shtml
+				// new ProcessBuilder("cmd", "cls").inheritIO().start();
 				loopRemedy();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -45,19 +45,20 @@ public class Main {
 
 	}
 
-	/*public static void start() {
-
-		// System.setProperty("webdriver.firefox.bin",
-		// "D:\\software\\firefox\\firefox.exe");
-		// System.setProperty("webdriver.firefox.marionette","D:\\download\\360dl\\geckodriver-v0.11.1-win64\\geckodriver.exe");
-		System.setProperty("webdriver.chrome.driver", "D:\\download\\360dl\\chromedriver_win32\\chromedriver.exe");
-		WebDriver driver = new ChromeDriver();
-		driver.get("http://www.baidu.com");
-		driver.findElement(By.id("kw")).sendKeys("selenium java");
-		driver.findElement(By.id("su")).click();
-		driver.quit();// quit之后会关闭chromedriver.exe
-	}
-*/
+	/*
+	 * public static void start() {
+	 * 
+	 * // System.setProperty("webdriver.firefox.bin", //
+	 * "D:\\software\\firefox\\firefox.exe"); //
+	 * System.setProperty("webdriver.firefox.marionette",
+	 * "D:\\download\\360dl\\geckodriver-v0.11.1-win64\\geckodriver.exe");
+	 * System.setProperty("webdriver.chrome.driver",
+	 * "D:\\download\\360dl\\chromedriver_win32\\chromedriver.exe"); WebDriver
+	 * driver = new ChromeDriver(); driver.get("http://www.baidu.com");
+	 * driver.findElement(By.id("kw")).sendKeys("selenium java");
+	 * driver.findElement(By.id("su")).click(); driver.quit();//
+	 * quit之后会关闭chromedriver.exe }
+	 */
 	public static void prepare() {
 		// driver = new FirefoxDriver();
 		driver = new ChromeDriver();
@@ -83,16 +84,18 @@ public class Main {
 
 		Thread.sleep(40000l);
 
-		
 		/*
 		 * /try { Thread.sleep(3000l); } catch (InterruptedException e1) { //
 		 */
 		//// driver.findElement(By.cssSelector("div.btntextdiv")).click();
 		// 点击打开按钮
 		driver.findElement(By.xpath("//a[@id='WIN_1_304016900']/div/div")).click();
+
+		// wait for 5s, ensure the data is exist
+		Thread.sleep(5000l);
 		// a[@id='WIN_1_304017100']/div/div
 		// 点击未确认按钮
-		//driver.findElement(By.xpath("//a[@id='WIN_1_304017100']/div/div")).click();
+		// driver.findElement(By.xpath("//a[@id='WIN_1_304017100']/div/div")).click();
 
 		WebElement table = driver.findElement(By.id("T302087200"));
 		// System.out.println(findElement.getText());
@@ -111,13 +114,13 @@ public class Main {
 				formatter.format("%16s %-5s %-5s\n", ID, priority, status);
 				if (status.equals("已指派")) {
 					unACK++;
-					System.out.println("有未受理ticket"+new Date().toString());
+					System.out.println("有未受理ticket" + new Date().toString());
 					player.play();
 				}
 				// System.out.println(status);
 			}
 		}
-		System.out.println(new Date().toString()+" UnACK:" + unACK);
+		System.out.println(new Date().toString() + " UnACK:" + unACK);
 	}
 
 }
