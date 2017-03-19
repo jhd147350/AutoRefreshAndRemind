@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -14,8 +15,7 @@ import jhd.config.Constant;
 
 /**
  * 
- * @author jia.haodong
- * v1.2
+ * @author jia.haodong v1.2
  */
 public class Main {
 
@@ -40,12 +40,24 @@ public class Main {
 				// http://www.th7.cn/system/win/201610/186464.shtml
 				// new ProcessBuilder("cmd", "cls").inheritIO().start();
 				loopRemedy();
-			} catch (Exception e) {
+			} /*
+				 * catch (StaleElementReferenceException e) { //break;
+				 * System.out.println("StaleElementReferenceException");
+				 * 
+				 * }
+				 */
+			catch (Exception e) {
+				if (e instanceof StaleElementReferenceException) {
+					// 有時候,会出现这种异常，据说是因为浏览器刷新导致的，remedy系统会定时刷新，
+					// 可能在获取内容时，浏览器正好刷新了，所以导致该异常抛出
+					System.out.println("StaleElementReferenceException");
+				}
 				e.printStackTrace();
 				System.out.println(new Date().toString());
 				ErrOutput.err("循环出错");
 				player.play();
 			}
+
 		}
 
 	}
@@ -86,6 +98,7 @@ public class Main {
 	 * @throws Exception
 	 */
 	public static void loopRemedy() throws Exception {
+		Thread.sleep(40000l);
 		/*
 		 * /try { Thread.sleep(3000l); } catch (InterruptedException e1) { //
 		 */
@@ -93,8 +106,8 @@ public class Main {
 		// 点击打开按钮
 		driver.findElement(By.xpath("//a[@id='WIN_1_304016900']/div/div")).click();
 
-		// wait for 5s, ensure the data is exist
-		Thread.sleep(5000l);
+		// wait for 4s, ensure the data is exist
+		Thread.sleep(4000l);
 		// a[@id='WIN_1_304017100']/div/div
 		// 点击未确认按钮
 		// driver.findElement(By.xpath("//a[@id='WIN_1_304017100']/div/div")).click();
@@ -123,7 +136,6 @@ public class Main {
 			}
 		}
 		System.out.println(new Date().toString() + " UnACK:" + unACK);
-		Thread.sleep(40000l);
 	}
 
 }
