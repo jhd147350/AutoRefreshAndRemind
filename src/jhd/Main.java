@@ -86,9 +86,6 @@ public class Main {
 	 * @throws Exception
 	 */
 	public static void loopRemedy() throws Exception {
-
-		Thread.sleep(40000l);
-
 		/*
 		 * /try { Thread.sleep(3000l); } catch (InterruptedException e1) { //
 		 */
@@ -126,6 +123,7 @@ public class Main {
 			}
 		}
 		System.out.println(new Date().toString() + " UnACK:" + unACK);
+		Thread.sleep(40000l);
 	}
 
 }
