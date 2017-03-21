@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -22,6 +23,7 @@ public class Main {
 	private static WebDriver driver;
 	private static String baseUrl;
 	private static Mp3Player player = new Mp3Player();
+	private static Mp3Player player2 = new Mp3Player("SuperMarioBros.mp3");
 	static Formatter formatter = new Formatter(System.out);
 	/*
 	 * static { Constant.readProperties(); }
@@ -46,16 +48,21 @@ public class Main {
 				 * 
 				 * }
 				 */
-			catch (Exception e) {
-				if (e instanceof StaleElementReferenceException) {
-					// 有時候,会出现这种异常，据说是因为浏览器刷新导致的，remedy系统会定时刷新，
-					// 可能在获取内容时，浏览器正好刷新了，所以导致该异常抛出
-					System.out.println("StaleElementReferenceException");
-				}
+			catch (Exception e) {	
 				e.printStackTrace();
 				System.out.println(new Date().toString());
 				ErrOutput.err("循环出错");
-				player.play();
+				if (e instanceof StaleElementReferenceException) {
+					// 有時候,会出现这种异常，据说是因为浏览器刷新导致的，remedy系统会定时刷新，
+					// 可能在获取内容时，浏览器正好刷新了，所以导致该异常抛出
+					ErrOutput.err("StaleElementReference");
+				}
+				if (e instanceof NoSuchElementException) {
+					// 有時候,会出现这种异常，据说是因为浏览器刷新导致的，remedy系统会定时刷新，
+					// 可能在获取内容时，浏览器正好刷新了，所以导致该异常抛出
+					ErrOutput.err("NoSuchElement");
+				}
+				player2.play();
 			}
 
 		}
@@ -78,7 +85,15 @@ public class Main {
 	 */
 	public static void prepare() {
 		// driver = new FirefoxDriver();
-		driver = new ChromeDriver();
+		try{
+			driver = new ChromeDriver();
+		}
+		catch (IllegalStateException e) {
+			ErrOutput.err("请设置google chrome驱动环境变量，并且确保驱动版本和您的chrome版本一致");
+			// TODO: handle exception
+			System.exit(0);
+		}
+		
 		baseUrl = "https://chinabluemix.itsm.unisysedge.cn";
 		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 

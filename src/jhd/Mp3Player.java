@@ -13,8 +13,13 @@ public class Mp3Player {
 	//private String filename;
 	private Player player;
 	private boolean playing = false;
+	private String fileName=null;
 
 	public Mp3Player() {
+	}
+	public Mp3Player(String fileName){
+		this.fileName=fileName;
+		
 	}
 	public void play() {
 		if (playing) {
@@ -23,7 +28,8 @@ public class Mp3Player {
 		}
 		playing = true;
 		try {
-			BufferedInputStream in = new BufferedInputStream(new FileInputStream("contra.mp3"));
+			//如果初始指定fileName就播放fileName的MP3
+			BufferedInputStream in = new BufferedInputStream(new FileInputStream(fileName==null?"contra.mp3":fileName));
 			player = new Player(in);
 			System.out.println("play");
 			//StatusBar.currentStatus.setText("playing");
