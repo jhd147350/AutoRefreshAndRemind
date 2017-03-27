@@ -35,6 +35,9 @@ public class Main {
 		Constant.readProperties();
 
 		prepare();
+		
+		//最大化浏览器
+		driver.manage().window().maximize();
 
 		while (true) {
 			try {
@@ -113,16 +116,18 @@ public class Main {
 	 * @throws Exception
 	 */
 	public static void loopRemedy() throws Exception {
-		Thread.sleep(40000l);
+		Thread.sleep(60000l);
+		//采取刷新整个页面的方式
+		driver.navigate().refresh();
 		/*
 		 * /try { Thread.sleep(3000l); } catch (InterruptedException e1) { //
 		 */
 		//// driver.findElement(By.cssSelector("div.btntextdiv")).click();
 		// 点击打开按钮
-		driver.findElement(By.xpath("//a[@id='WIN_1_304016900']/div/div")).click();
+		//driver.findElement(By.xpath("//a[@id='WIN_1_304016900']/div/div")).click();
 
-		// wait for 4s, ensure the data is exist
-		Thread.sleep(4000l);
+		// wait for 3s, ensure the data is exist
+		//Thread.sleep(3000l);
 		// a[@id='WIN_1_304017100']/div/div
 		// 点击未确认按钮
 		// driver.findElement(By.xpath("//a[@id='WIN_1_304017100']/div/div")).click();
