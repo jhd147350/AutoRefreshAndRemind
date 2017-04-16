@@ -16,9 +16,12 @@ import jhd.config.Constant;
 
 /**
  * 
- * @author jia.haodong v1.2
+ * @author jia.haodong v1.5
  */
 public class Main {
+	// 刷新间隔75秒
+	private static int TIME_INT = 75;
+	private static long TIME = 75000l;
 
 	private static WebDriver driver;
 	private static String baseUrl;
@@ -35,8 +38,8 @@ public class Main {
 		Constant.readProperties();
 
 		prepare();
-		
-		//最大化浏览器
+
+		// 最大化浏览器
 		driver.manage().window().maximize();
 
 		while (true) {
@@ -44,14 +47,21 @@ public class Main {
 
 				// http://www.th7.cn/system/win/201610/186464.shtml
 				// new ProcessBuilder("cmd", "cls").inheritIO().start();
-				loopRemedy();
+				// Thread.sleep(TIME);
+				countdown();
+				Pending temp = new Pending();
+				temp.start();
+				// 将pending对象传进去，由里面去控制何时停止刷新提示
+				loopRemedy(temp);
+				// out();
+
 			} /*
 				 * catch (StaleElementReferenceException e) { //break;
 				 * System.out.println("StaleElementReferenceException");
 				 * 
 				 * }
 				 */
-			catch (Exception e) {	
+			catch (Exception e) {
 				e.printStackTrace();
 				System.out.println(new Date().toString());
 				ErrOutput.err("循环出错");
@@ -88,15 +98,14 @@ public class Main {
 	 */
 	public static void prepare() {
 		// driver = new FirefoxDriver();
-		try{
+		try {
 			driver = new ChromeDriver();
-		}
-		catch (IllegalStateException e) {
+		} catch (IllegalStateException e) {
 			ErrOutput.err("请设置google chrome驱动环境变量，并且确保驱动版本和您的chrome版本一致");
 			// TODO: handle exception
 			System.exit(0);
 		}
-		
+
 		baseUrl = "https://chinabluemix.itsm.unisysedge.cn";
 		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 
@@ -113,32 +122,38 @@ public class Main {
 	/**
 	 * 循环判断是否有未受理ticket出现 时间间隔可自定义 有任何异常 直接抛出处理，且证明监听遇到问题
 	 * 
+	 * @param Pending
+	 *            temp 控制停止刷新
 	 * @throws Exception
 	 */
-	public static void loopRemedy() throws Exception {
-		Thread.sleep(60000l);
-		//采取刷新整个页面的方式
+	public static void loopRemedy(Pending temp) throws Exception {
+
+		// 采取刷新整个页面的方式
 		driver.navigate().refresh();
 		/*
 		 * /try { Thread.sleep(3000l); } catch (InterruptedException e1) { //
 		 */
 		//// driver.findElement(By.cssSelector("div.btntextdiv")).click();
 		// 点击打开按钮
-		//driver.findElement(By.xpath("//a[@id='WIN_1_304016900']/div/div")).click();
+		// driver.findElement(By.xpath("//a[@id='WIN_1_304016900']/div/div")).click();
 
 		// wait for 3s, ensure the data is exist
-		//Thread.sleep(3000l);
+		// Thread.sleep(3000l);
 		// a[@id='WIN_1_304017100']/div/div
 		// 点击未确认按钮
 		// driver.findElement(By.xpath("//a[@id='WIN_1_304017100']/div/div")).click();
 
 		WebElement table = driver.findElement(By.id("T302087200"));
 		// System.out.println(findElement.getText());
-		System.out.println("------------------------------------");
 
 		WebElement tbody = table.findElement(By.tagName("tbody"));
 		List<WebElement> trs = tbody.findElements(By.tagName("tr"));
 		int unACK = 0;
+
+		// 停止正在刷新的提示
+		temp.stop();
+
+		System.out.println("\n------------------------------------");
 		for (int i = 1; i < trs.size(); i++) {// 跳过第一个，第一个是表头
 			List<WebElement> tds = trs.get(i).findElements(By.tagName("td"));
 			if (tds != null && tds.size() >= 4) {
@@ -155,7 +170,92 @@ public class Main {
 				// System.out.println(status);
 			}
 		}
-		System.out.println(new Date().toString() + " UnACK:" + unACK);
+		System.out.println(new Date().toString() + " UnACK:" + unACK + "\n");
+	}
+
+	// 倒计时
+	static public void countdown() throws InterruptedException {
+		// 25*3 75s
+		// =========================
+		// ---
+		// 进度总数
+		int SUM = TIME_INT / 3;
+		boolean isFirst = true;
+		int N = 3;
+
+		// 倒计时次数
+		int count = TIME_INT;
+
+		while (count > 0) {
+
+			count--;
+
+			if (!isFirst) {
+				System.out.print('\r');
+			}
+			isFirst = false;
+			// 将 倒计时除3得到 进度
+			int realCount = count / N;
+			TimeUnit.SECONDS.sleep(1);
+			System.out.print("|");
+			for (int i = 0; i < (SUM - realCount); i++) {
+				System.out.print("=");
+			}
+			for (int i = 0; i < (realCount); i++) {
+				System.out.print("-");
+			}
+			if (count < 10) {
+				System.out.print("| 0" + count);
+			} else {
+				System.out.print("| " + count);
+			}
+			System.out.print("s");
+
+		}
+		System.out.print("\n");
+
+	}
+
+}
+
+class Pending {
+
+	private boolean RUN = true;
+
+	private Thread d = new Thread() {
+		public void run() {
+			try {
+				pending();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		};
+	};
+
+	private void pending() throws InterruptedException {
+
+		// 01234321 01234321
+		String[] anim = { "^        ", " ^      ", "  ^    ", "   ^  ", "    ^" };
+		int[] rule = { 0, 1, 2, 3, 4, 3, 2, 1 };
+		int i = 0;
+		while (RUN) {
+			System.out.print('\r');
+			System.out.print("Refreshing:  " + anim[rule[i % 8]]);
+			i++;
+			TimeUnit.MILLISECONDS.sleep(100l);
+		}
+	}
+
+	public void start() {
+		if (d != null) {
+			d.start();
+		}
+
+	}
+
+	public void stop() {
+		RUN = false;
 	}
 
 }
