@@ -26,7 +26,11 @@
 ## v1.5 
 20170416更新：
 - 优化显示效果，增加倒计时和刷新的提示，能看出程序的运行状态
-- 刷新间隔改为75s
+- 刷新间隔改为75s  
+
+20170813跟新：  
+- 由于写的是循环，故每次关闭程序的时候无法执行driver.quit()。为了保证多次启动程序也只有一个chromedriver在运行，每次启动程序执行了taskkill /im chromedriver.exe /F。  
+- 修改构建工具为maven
 
 ---------
 https://github.com/jhd147350/AutoRefreshAndRemind
