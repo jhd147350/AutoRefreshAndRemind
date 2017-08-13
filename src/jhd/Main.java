@@ -21,21 +21,32 @@ import jhd.config.Constant;
 public class Main {
 	// 刷新间隔75秒
 	private static int TIME_INT = 75;
-	private static long TIME = 75000l;
+	// private static long TIME = 75000l;
 
 	private static WebDriver driver;
 	private static String baseUrl;
 	private static Mp3Player player = new Mp3Player();
 	private static Mp3Player player2 = new Mp3Player("SuperMarioBros.mp3");
 	static Formatter formatter = new Formatter(System.out);
-	/*
-	 * static { Constant.readProperties(); }
+
+	/**
+	 * 每次程序执行完先关闭chromedriver 保证程序运行几次始终都会有一个chromedriver在运行 节省内存消耗
 	 */
+	public static void closeChromeDriverByCmd() {
+		Runtime runtime = Runtime.getRuntime();
+		try {
+			runtime.exec("cmd /c taskkill /im chromedriver.exe /F");
+		} catch (Exception e) {
+			System.out.println("Error when close chromedriver!");
+		}
+	}
 
 	public static void main(String[] args) {
 
 		// 初始化密码等信息
 		Constant.readProperties();
+		// 每次先关掉已打开的chromedriver.exe
+		closeChromeDriverByCmd();
 
 		prepare();
 
@@ -44,24 +55,12 @@ public class Main {
 
 		while (true) {
 			try {
-
-				// http://www.th7.cn/system/win/201610/186464.shtml
-				// new ProcessBuilder("cmd", "cls").inheritIO().start();
-				// Thread.sleep(TIME);
 				countdown();
 				Pending temp = new Pending();
 				temp.start();
 				// 将pending对象传进去，由里面去控制何时停止刷新提示
 				loopRemedy(temp);
-				// out();
-
-			} /*
-				 * catch (StaleElementReferenceException e) { //break;
-				 * System.out.println("StaleElementReferenceException");
-				 * 
-				 * }
-				 */
-			catch (Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 				System.out.println(new Date().toString());
 				ErrOutput.err("循环出错");
@@ -77,25 +76,9 @@ public class Main {
 				}
 				player2.play();
 			}
-
 		}
-
 	}
 
-	/*
-	 * public static void start() {
-	 * 
-	 * // System.setProperty("webdriver.firefox.bin", //
-	 * "D:\\software\\firefox\\firefox.exe"); //
-	 * System.setProperty("webdriver.firefox.marionette",
-	 * "D:\\download\\360dl\\geckodriver-v0.11.1-win64\\geckodriver.exe");
-	 * System.setProperty("webdriver.chrome.driver",
-	 * "D:\\download\\360dl\\chromedriver_win32\\chromedriver.exe"); WebDriver
-	 * driver = new ChromeDriver(); driver.get("http://www.baidu.com");
-	 * driver.findElement(By.id("kw")).sendKeys("selenium java");
-	 * driver.findElement(By.id("su")).click(); driver.quit();//
-	 * quit之后会关闭chromedriver.exe }
-	 */
 	public static void prepare() {
 		// driver = new FirefoxDriver();
 		try {
@@ -130,18 +113,6 @@ public class Main {
 
 		// 采取刷新整个页面的方式
 		driver.navigate().refresh();
-		/*
-		 * /try { Thread.sleep(3000l); } catch (InterruptedException e1) { //
-		 */
-		//// driver.findElement(By.cssSelector("div.btntextdiv")).click();
-		// 点击打开按钮
-		// driver.findElement(By.xpath("//a[@id='WIN_1_304016900']/div/div")).click();
-
-		// wait for 3s, ensure the data is exist
-		// Thread.sleep(3000l);
-		// a[@id='WIN_1_304017100']/div/div
-		// 点击未确认按钮
-		// driver.findElement(By.xpath("//a[@id='WIN_1_304017100']/div/div")).click();
 
 		WebElement table = driver.findElement(By.id("T302087200"));
 		// System.out.println(findElement.getText());
@@ -187,9 +158,7 @@ public class Main {
 		int count = TIME_INT;
 
 		while (count > 0) {
-
 			count--;
-
 			if (!isFirst) {
 				System.out.print('\r');
 			}
@@ -210,10 +179,8 @@ public class Main {
 				System.out.print("| " + count);
 			}
 			System.out.print("s");
-
 		}
 		System.out.print("\n");
-
 	}
 
 }
@@ -251,11 +218,9 @@ class Pending {
 		if (d != null) {
 			d.start();
 		}
-
 	}
 
 	public void stop() {
 		RUN = false;
 	}
-
 }

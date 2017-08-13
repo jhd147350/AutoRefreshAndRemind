@@ -85,6 +85,7 @@ public class Constant {
 		USERNAME = s.next();
 		System.out.println("Password:");
 		PASSWORD = s.next();
+		s.close();
 		writeProperties();
 	}
 
