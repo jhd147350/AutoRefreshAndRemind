@@ -11,6 +11,8 @@ import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import jhd.config.Constant;
 
@@ -54,13 +56,15 @@ public class Main {
 		driver.manage().window().maximize();
 
 		while (true) {
+			//这个类显示浏览器在刷新完成之前的等待操作
+			Pending temp = new Pending();
 			try {
 				countdown();
-				Pending temp = new Pending();
 				temp.start();
 				// 将pending对象传进去，由里面去控制何时停止刷新提示
 				loopRemedy(temp);
 			} catch (Exception e) {
+				temp.stop();//出异常也要停止这个
 				e.printStackTrace();
 				System.out.println(new Date().toString());
 				ErrOutput.err("循环出错");
@@ -74,6 +78,7 @@ public class Main {
 					// 可能在获取内容时，浏览器正好刷新了，所以导致该异常抛出
 					ErrOutput.err("NoSuchElement");
 				}
+				//driver.quit();//关闭浏览器
 				player2.play();
 			}
 		}
@@ -113,6 +118,10 @@ public class Main {
 
 		// 采取刷新整个页面的方式
 		driver.navigate().refresh();
+		
+		//要等到这个表格元素存在 才是真正的刷新完毕
+		WebDriverWait wait= new WebDriverWait(driver, 15);
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.id("T302087200")));
 
 		WebElement table = driver.findElement(By.id("T302087200"));
 		// System.out.println(findElement.getText());
@@ -194,7 +203,6 @@ class Pending {
 			try {
 				pending();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		};
