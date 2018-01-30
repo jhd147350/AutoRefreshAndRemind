@@ -11,14 +11,11 @@ import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
 import jhd.config.Constant;
 
 /**
  * 
- * @author jia.haodong v1.5
+ * @author jia.haodong v1.6
  */
 public class Main {
 	// 刷新间隔75秒
@@ -117,11 +114,14 @@ public class Main {
 	public static void loopRemedy(Pending temp) throws Exception {
 
 		// 采取刷新整个页面的方式
-		driver.navigate().refresh();
+		//#WIN_1_304017100 点击未确认
+		
+		WebElement unConfirm = driver.findElement(By.id("WIN_1_304017100"));
+		unConfirm.click();
 		
 		//要等到这个表格元素存在 才是真正的刷新完毕
-		WebDriverWait wait= new WebDriverWait(driver, 15);
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.id("T302087200")));
+		//WebDriverWait wait= new WebDriverWait(driver, 15);
+		//wait.until(ExpectedConditions.presenceOfElementLocated(By.id("T302087200")));
 
 		WebElement table = driver.findElement(By.id("T302087200"));
 		// System.out.println(findElement.getText());
@@ -191,7 +191,6 @@ public class Main {
 		}
 		System.out.print("\n");
 	}
-
 }
 
 class Pending {
