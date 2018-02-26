@@ -5,6 +5,8 @@
 - 程序运行中 操作页面，会导致后面程序出错，请注销后关闭再次运行。
 - 程序刷新间隔为75s。
 
+screenshot：   
+![screenshot](monitor-remedy-screenshot.png)
 # AutoRefreshAndRemind
 先导出jar包，然后执行exportJavaConsole转成exe程序(需要安转exe4j) 
 
